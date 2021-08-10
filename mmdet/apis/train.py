@@ -59,6 +59,7 @@ def train_detector(model,
                 f'{cfg.data.imgs_per_gpu} in this experiments')
         cfg.data.samples_per_gpu = cfg.data.imgs_per_gpu
 
+    print(dataset)
     data_loaders = [
         build_dataloader(
             ds,

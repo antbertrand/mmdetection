@@ -217,7 +217,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
         num_levels = len(pred_maps)
         pred_maps_list = [pred_maps[i].detach() for i in range(num_levels)]
         scale_factors = [
-            img_metas[i]['scale_factor']
+            img_metas['scale_factor']
             for i in range(pred_maps_list[0].shape[0])
         ]
         result_list = self._get_bboxes(pred_maps_list, scale_factors, cfg,
@@ -587,7 +587,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
             anchor_strides[sampling_result.pos_inds])
 
         target_map[sampling_result.pos_inds, 4] = 1
-
+        #print('GT', gt_labels)
         gt_labels_one_hot = F.one_hot(
             gt_labels, num_classes=self.num_classes).float()
         if self.one_hot_smoother != 0:  # label smooth

@@ -130,9 +130,16 @@ def inference_detector(model, imgs):
         datas.append(data)
 
     data = collate(datas, samples_per_gpu=len(imgs))
-    # just get the actual data from DataContainer
-    data['img_metas'] = [img_metas.data[0] for img_metas in data['img_metas']]
-    data['img'] = [img.data[0] for img in data['img']]
+
+
+    # just get the actual data from DataContaine
+
+    data['img_metas'] = data['img_metas'].data
+    data['img_metas'] = [img_metas[0] for img_metas in data['img_metas']]
+
+    data['img'] = data['img'].data
+    data['img'] = [img[0] for img in data['img']]
+
     if next(model.parameters()).is_cuda:
         # scatter to specified GPU
         data = scatter(data, [device])[0]
@@ -141,6 +148,9 @@ def inference_detector(model, imgs):
             assert not isinstance(
                 m, RoIPool
             ), 'CPU inference with RoIPool is not supported currently.'
+
+
+
 
     # forward the model
     with torch.no_grad():

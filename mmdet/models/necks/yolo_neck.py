@@ -123,13 +123,15 @@ class YOLOV3Neck(BaseModule):
         outs = []
         out = self.detect1(feats[-1])
         outs.append(out)
-
+        #print('AA', len(feats), feats[0].size(), feats[1].size(), feats[2].size())
         for i, x in enumerate(reversed(feats[:-1])):
+            #print('BB', i, x.size())
             conv = getattr(self, f'conv{i+1}')
             tmp = conv(out)
 
             # Cat with low-lvl feats
             tmp = F.interpolate(tmp, scale_factor=2)
+            #print(tmp.size(),x.size())
             tmp = torch.cat((tmp, x), 1)
 
             detect = getattr(self, f'detect{i+2}')

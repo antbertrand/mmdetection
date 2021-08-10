@@ -76,15 +76,10 @@ class BBoxTestMixin:
         rois = bbox2roi(proposals)
 
         if rois.shape[0] == 0:
-            batch_size = len(proposals)
-            det_bbox = rois.new_zeros(0, 5)
-            det_label = rois.new_zeros((0, ), dtype=torch.long)
-            if rcnn_test_cfg is None:
-                det_bbox = det_bbox[:, :4]
-                det_label = rois.new_zeros(
-                    (0, self.bbox_head.fc_cls.out_features))
             # There is no proposal in the whole batch
-            return [det_bbox] * batch_size, [det_label] * batch_size
+            return [rois.new_zeros(0, 5)] * len(proposals), [
+                rois.new_zeros((0, ), dtype=torch.long)
+            ] * len(proposals)
 
         bbox_results = self._bbox_forward(x, rois)
         img_shapes = tuple(meta['img_shape'] for meta in img_metas)
@@ -117,11 +112,6 @@ class BBoxTestMixin:
                 # There is no proposal in the single image
                 det_bbox = rois[i].new_zeros(0, 5)
                 det_label = rois[i].new_zeros((0, ), dtype=torch.long)
-                if rcnn_test_cfg is None:
-                    det_bbox = det_bbox[:, :4]
-                    det_label = rois[i].new_zeros(
-                        (0, self.bbox_head.fc_cls.out_features))
-
             else:
                 det_bbox, det_label = self.bbox_head.get_bboxes(
                     rois[i],
